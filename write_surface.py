@@ -75,10 +75,10 @@
 
 # boundaryProbes to Validate
 import numpy as np
-x_min, x_max = -0.5, 1.5
-z_min, z_max = -1, 1
+x_min, x_max = -0.05, 1.25
+z_min, z_max = -0.075, 0.075
 y_min, y_max = 0, 1
-res = 64
+res = 128
 
 x_values = np.linspace(x_min, x_max, res)
 z_values = np.linspace(z_min, z_max, res)
