@@ -73,24 +73,44 @@
 #     file.write(');') #寫入最後一行
 # print(f'Write the surface points in {write_path} file.')
 
-# boundaryProbes to Validate
-import numpy as np
-x_min, x_max = -0.05, 1.25
-z_min, z_max = -0.075, 0.075
-y_min, y_max = 0, 1
-res = 128
+## boundaryProbes to Validate
+# import numpy as np
+# x_min, x_max = -0.5, 1.5
+# z_min, z_max = -1, 1
+# y_min, y_max = 0, 1
+# res = 64
 
-x_values = np.linspace(x_min, x_max, res)
-z_values = np.linspace(z_min, z_max, res)
-y_values = np.linspace(y_min, y_max, res)
+# x_values = np.linspace(x_min, x_max, res)
+# z_values = np.linspace(z_min, z_max, res)
+# y_values = np.linspace(y_min, y_max, res)
 
-write_path_AIP = 'system/include/AIP'
-with open(write_path_AIP, 'w') as file:
+# write_path_AIP = 'system/include/AIP'
+# with open(write_path_AIP, 'w') as file:
+#     file.write("pts\n(\n")
+#     for z in z_values:
+#         for y in y_values:
+#             y *= 1.1963
+#             for x in x_values:
+#                 file.write(f"({x} {y} {z})\n")
+#     file.write(");")
+# print(f'Write the surface points in {write_path_AIP} file.')
+
+# InternalCloud to Validate (Using Exp)
+import pandas as pd
+section = 0.2
+L_dic = {'0.2':0.63495, '0.65':0.50379, '0.8':0.44343, '0.9':0.41128}
+exp_path = f"exp/exp{int(section * 100)}pc.csv"
+exp_df = pd.read_csv(exp_path, delimiter='\s+', header=None, names=['Section','Tap','X/L','Z/L','Cp']).round(5)
+L = L_dic[f'{section}']
+y = round(section * 1.1963, 5)
+exp_df['x'] = exp_df['X/L'] * L
+exp_df['z'] = exp_df['Z/L'] * L
+exp_df['y'] = y
+formatted_data = exp_df.apply(lambda row: f"({row['x']} {row['y']} {row['z']})", axis=1)
+write_path_EXP = 'system/include/EXP'
+with open(write_path_EXP, 'w') as file:
     file.write("pts\n(\n")
-    for z in z_values:
-        for y in y_values:
-            y *= 1.1963
-            for x in x_values:
-                file.write(f"({x} {y} {z})\n")
+    for line in formatted_data:
+        file.write(f"{line}\n")
     file.write(");")
-print(f'Write the surface points in {write_path_AIP} file.')
+print(f'Write the surface points in {write_path_EXP} file.')
